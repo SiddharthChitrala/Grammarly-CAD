@@ -1,0 +1,17 @@
+           
+        insert_sql = "INSERT INTO SPELLINGCHECK VALUES (?,?,?,?)"
+        stmt = ibm_db.prepare(conn, insert_sql)
+         ibm_db.bind_param(stmt, 1, word)
+         ibm_db.bind_param(stmt, 2, error)
+         ibm_db.bind_param(stmt, 3, position)
+         ibm_db.bind_param(stmt, 4, suggestions)
+         ibm_db.execute(stmt)
+
+
+         insert_sql = "INSERT INTO GRAMMAR VALUES (?,?,?,?)"
+         prep_stmt = ibm_db.prepare(conn, insert_sql)
+         ibm_db.bind_param(prep_stmt, 1, text)
+         ibm_db.bind_param(prep_stmt, 2, str(blob))
+         ibm_db.bind_param(prep_stmt, 3, sentiment)
+         ibm_db.bind_param(prep_stmt, 4, noun_phrases)
+         ibm_db.execute(prep_stmt)
