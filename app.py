@@ -1,8 +1,6 @@
 import json
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import ibm_db
-import re
-import os
 import requests
 # use here textblob for checking proofreading, grammar
 # using textblob
@@ -96,17 +94,16 @@ def GrammarCheck():
         blob = TextBlob(text)
         sentiment = blob.sentiment.polarity
         noun_phrases = blob.noun_phrases
-        text_noun_phrases = "\n".join(noun_phrases)
+        text_noun_phrases = "\t".join(noun_phrases)
         print(text_noun_phrases)
         print(sentiment)
         print(noun_phrases)
      
-        insert_sql = "INSERT INTO GRAMMAR VALUES (?,?,?,?)"
+        insert_sql = "INSERT INTO GRAMMAR VALUES (?,?,?)"
         prep_stmt = ibm_db.prepare(conn, insert_sql)
         ibm_db.bind_param(prep_stmt, 1, text)
-        ibm_db.bind_param(prep_stmt, 2, blob)
-        ibm_db.bind_param(prep_stmt, 3, sentiment)
-        ibm_db.bind_param(prep_stmt, 4, noun_phrases)
+        ibm_db.bind_param(prep_stmt, 2, sentiment)
+        ibm_db.bind_param(prep_stmt, 3, text_noun_phrases)      
         ibm_db.execute(prep_stmt)
         return render_template('Grammarcheck.html', sentiment=sentiment, noun_phrases=noun_phrases)
     return render_template('Grammarcheck.html')
@@ -133,7 +130,9 @@ def summarise():
         }
 
         response = requests.post(url, json=payload, headers=headers)
-        summary = response.json()
+        summary1 = response.json()
+   
+        summary=summary1.get("summary")
         print(summary)
         insert_sql = "INSERT INTO SUMMARY VALUES (?,?,?)"
         stmt = ibm_db.prepare(conn, insert_sql)
@@ -214,4 +213,4 @@ def about():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+   app.run(port=5000, host="0.0.0.0")

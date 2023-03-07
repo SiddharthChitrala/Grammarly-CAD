@@ -1,0 +1,20 @@
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: newgrammar
+ spec:
+   replicas: 3
+   selector:
+     matchLabels:
+       app: newgrammar
+   template:
+     metadata:
+       labels:
+         app: newgrammar
+     spec:
+       containers:
+       - name: grammar
+         image: jp.icr.io/grammar/newgrammar
+         imagePullPolicy: Always
+         ports:
+         - containerPort: 5000
